@@ -3,6 +3,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV,ParameterGrid
 
 
 data = pd.read_csv('./data/BlackFriday.csv')
@@ -21,9 +22,19 @@ std = StandardScaler()
 X = std.fit_transform(X)
 X_train,X_test,y_train,y_test = train_test_split(X,y)
 
-rfr = RandomForestRegressor(n_estimators=10)
-rfr.fit(X_train, y_train)
-y_pre = rfr.predict(X_test)
-print(y_pre)
-print('准确率：',rfr.score(X_test, y_test))
+# rfr = RandomForestRegressor(n_estimators=10)
+# rfr.fit(X_train, y_train)
+# y_pre = rfr.predict(X_test)
+# print(y_pre)
+# print('准确率：',rfr.score(X_test, y_test))
 
+
+parameter_space = {
+    "n_estimators": [2,3,4,5,6,7],
+    "min_samples_leaf": [2],
+}
+estimator = RandomForestRegressor()
+rfr_cv = GridSearchCV(estimator, parameter_space, cv=4)
+rfr_cv.fit(X_train,y_train)
+print(rfr_cv.best_params_)
+print(rfr_cv.best_score_)
